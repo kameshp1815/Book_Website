@@ -1,9 +1,15 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useBook } from '../hooks/useBooks';
+import { useAuth } from '../context/AuthContext';
+import { useAddToLibrary } from '../hooks/useLibrary';
+import { libraryAPI } from '../api/library';
 
 const BookDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: book, isLoading, error } = useBook(id);
+  const addToLibrary = useAddToLibrary();
 
   if (isLoading) {
     return (
@@ -68,6 +74,17 @@ const BookDetails = () => {
                   </div>
                 )}
 
+                {/* Tags */}
+                {book.tags && book.tags.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {book.tags.map((tag) => (
+                      <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
                 {/* Description */}
                 <div className="mt-6">
                   <h3 className="text-lg font-medium text-gray-900">Description</h3>
@@ -91,13 +108,46 @@ const BookDetails = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-8 flex space-x-4">
-                  <button className="btn btn-primary">
-                    Add to Library
+                <div className="mt-8 flex flex-wrap gap-3 items-center">
+                  <button
+                    className="btn btn-primary"
+                    disabled={addToLibrary.isPending}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      try {
+                        await addToLibrary.mutateAsync(book._id);
+                        navigate('/library');
+                      } catch (err) {
+                        // Optional: feedback
+                      }
+                    }}
+                  >
+                    {addToLibrary.isPending ? 'Adding...' : 'Add to Library'}
                   </button>
-                  <button className="btn btn-secondary">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      try {
+                        // Ensure in library and set initial progress
+                        await addToLibrary.mutateAsync(book._id).catch(() => {});
+                        await libraryAPI.updateProgress({ bookId: book._id, progressPercent: 0 });
+                        // Open Reader view
+                        navigate(`/read/${book._id}`);
+                      } catch (err) {
+                        // Optional: feedback
+                      }
+                    }}
+                  >
                     Start Reading
                   </button>
+
+                  {/* Manage Chapters for owner */}
+                  {user && book.user === user._id && (
+                    <Link to={`/manage-chapters/${book._id}`} className="btn btn-outline">
+                      Manage Chapters
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

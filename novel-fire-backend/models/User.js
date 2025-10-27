@@ -6,6 +6,18 @@ const userSchema = mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    username: { type: String, unique: true, sparse: true },
+    bio: { type: String },
+    avatar: { type: String },
+    social: {
+      website: { type: String },
+      twitter: { type: String },
+      github: { type: String },
+      instagram: { type: String },
+      facebook: { type: String },
+    },
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }

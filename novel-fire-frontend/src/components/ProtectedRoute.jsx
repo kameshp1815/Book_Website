@@ -6,7 +6,7 @@
  * Shows loading state while authentication is being verified.
  */
 
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { PageLoader } from './Loader';
 
@@ -20,8 +20,8 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login page with return url
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Render nothing when the user is not authenticated
+    return null;
   }
 
   return children;

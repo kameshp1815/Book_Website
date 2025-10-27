@@ -15,10 +15,13 @@ const CreateBook = () => {
     author: '',
     description: '',
     genres: [],
+    tagsInput: '',
   });
+
   const [coverImage, setCoverImage] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [tags, setTags] = useState([]);
   const [errors, setErrors] = useState({});
 
   const createBookMutation = useCreateBook();
@@ -36,7 +39,7 @@ const CreateBook = () => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({
@@ -44,6 +47,24 @@ const CreateBook = () => {
         [name]: ''
       }));
     }
+  };
+
+  const handleTagsKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const value = formData.tagsInput.trim().replace(/^,|,$/g, '');
+      if (value && !tags.includes(value)) {
+        setTags(prev => [...prev, value]);
+      }
+      setFormData(prev => ({ ...prev, tagsInput: '' }));
+      if (errors.tags) {
+        setErrors(prev => ({ ...prev, tags: '' }));
+      }
+    }
+  };
+
+  const removeTag = (tag) => {
+    setTags(prev => prev.filter(t => t !== tag));
   };
 
   const handleImageChange = (e) => {
@@ -70,47 +91,54 @@ const CreateBook = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.title.trim()) {
       newErrors.title = 'Book title is required';
     }
-    
+
     if (!formData.author.trim()) {
       newErrors.author = 'Author name is required';
     }
-    
+
     if (!formData.description.trim()) {
       newErrors.description = 'Book description is required';
     } else if (formData.description.length < 50) {
       newErrors.description = 'Description must be at least 50 characters';
     }
-    
+
     if (selectedGenres.length === 0) {
       newErrors.genres = 'Please select at least one genre';
     }
-    
+
+    if (tags.some(t => t.length > 24)) {
+      newErrors.tags = 'Each tag must be 24 characters or less';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     try {
       const bookData = new FormData();
       bookData.append('title', formData.title);
       bookData.append('author', formData.author);
       bookData.append('description', formData.description);
       bookData.append('genres', JSON.stringify(selectedGenres));
-      
-      if (coverImage) {
-        bookData.append('coverImage', coverImage);
+      if (tags.length) {
+        bookData.append('tags', JSON.stringify(tags));
       }
-      
+
+      if (coverImage) {
+        bookData.append('cover', coverImage);
+      }
+
       const result = await createBookMutation.mutateAsync(bookData);
-      
+
       // Redirect to the newly created book or books management page
       navigate(`/book/${result._id}`);
     } catch (error) {
@@ -204,6 +232,33 @@ const CreateBook = () => {
               )}
             </div>
 
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tags (optional)
+              </label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {tags.map((tag) => (
+                  <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)} className="ml-2 text-gray-400 hover:text-gray-600">×</button>
+                  </span>
+                ))}
+              </div>
+              <input
+                type="text"
+                name="tagsInput"
+                value={formData.tagsInput}
+                onChange={handleInputChange}
+                onKeyDown={handleTagsKeyDown}
+                className={`mt-1 block w-full px-3 py-2 border ${errors.tags ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                placeholder="Type a tag and press Enter"
+              />
+              {errors.tags && (
+                <p className="mt-1 text-sm text-red-600">{errors.tags}</p>
+              )}
+            </div>
+
             {/* Genres */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -263,7 +318,7 @@ const CreateBook = () => {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />                  git add .
+                  />
                   <p className="mt-1 text-sm text-gray-500">
                     Upload a cover image for your book. Recommended size: 1920x1080px
                   </p>

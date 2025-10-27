@@ -6,19 +6,23 @@
  */
 
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     logout();
     setIsMobileMenuOpen(false); // Close mobile menu after logout
+    navigate('/login', { replace: true });
   };
 
   const toggleMobileMenu = () => {
@@ -30,13 +34,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="sticky top-0 z-40 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-gray-900/60 border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-blue-600">Novel Fire</span>
+              <FontAwesomeIcon icon={faBook} className="text-blue-600 text-xl mr-2" />
+              <span className="text-2xl font-bold text-blue-600">Novashelf</span>
             </Link>
           </div>
 
@@ -101,14 +106,31 @@ const Navbar = () => {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
+            {/* Dark mode toggle */}
+            <button
+              type="button"
+              onClick={() => document.documentElement.classList.toggle('dark')}
+              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition"
+              aria-label="Toggle dark mode"
+            >
+              <svg className="h-5 w-5 hidden dark:block" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M21.64 13A9 9 0 1111 2.36a7 7 0 0010.63 10.64z" />
+              </svg>
+              <svg className="h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 18a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm0-14a1 1 0 011-1V2a1 1 0 10-2 0v1a1 1 0 011 1zm6.364 2.636a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4.515 4.515a1 1 0 011.414 0l.707.707A1 1 0 015.222 6.93l-.707-.707a1 1 0 010-1.414zM18 12a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM4 12a1 1 0 011-1H6a1 1 0 110 2H5a1 1 0 01-1-1zm12.85 5.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM6.343 17.657a1 1 0 011.414 0l.707.707A1 1 0 016.05 20.485l-.707-.707a1 1 0 010-1.414z" />
+              </svg>
+            </button>
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700">Hello, {user?.name}</span>
                 <Link
                   to="/profile"
-                  className="text-sm text-gray-500 hover:text-gray-700"
+                  className="flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-sm hover:shadow"
                 >
-                  Profile
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                  My Account
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -140,7 +162,7 @@ const Navbar = () => {
             <button
               type="button"
               onClick={toggleMobileMenu}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 p-2"
+              className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
@@ -217,6 +239,20 @@ const Navbar = () => {
                     }`}
                   >
                     My Books
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={closeMobileMenu}
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/profile')
+                        ? 'text-white bg-gradient-to-r from-blue-500 to-indigo-600'
+                        : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                    }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                    My Account
                   </Link>
                   <button
                     onClick={handleLogout}

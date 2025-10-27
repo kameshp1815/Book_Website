@@ -7,6 +7,7 @@ const bookSchema = mongoose.Schema(
     author: { type: String },
     description: { type: String },
     genres: [{ type: String }],
+    tags: [{ type: String }],
     coverImage: { type: String },
     chaptersCount: { type: Number, default: 0 },
   },

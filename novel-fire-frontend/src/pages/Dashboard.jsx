@@ -8,12 +8,15 @@
 import { useAuth } from '../context/AuthContext';
 import { useBooks } from '../hooks/useBooks';
 import { useLibrary } from '../hooks/useLibrary';
+import { useDashboard } from '../hooks/useUsers';
+
 import { CardLoader } from '../components/Loader';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { data: recentBooks, isLoading: booksLoading } = useBooks({ limit: 6 });
   const { data: library, isLoading: libraryLoading } = useLibrary();
+  const { data: stats } = useDashboard();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,7 +53,7 @@ const Dashboard = () => {
                         Books in Library
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {libraryLoading ? '...' : library?.books?.length || 0}
+                        {stats?.libraryCount ?? (libraryLoading ? '...' : (library?.books?.length || 0))}
                       </dd>
                     </dl>
                   </div>
@@ -58,22 +61,22 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Reading Progress */}
+            {/* Followers */}
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
                     </svg>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">
-                        Books Completed
+                        Followers
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {stats?.followersCount ?? 0}
                       </dd>
                     </dl>
                   </div>
@@ -81,23 +84,60 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Current Reading */}
+            {/* Following */}
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m2-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">
-                        Currently Reading
+                        Following
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        0
+                        {stats?.followingCount ?? 0}
                       </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Extra stats */}
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Books Published</dt>
+                      <dd className="text-lg font-medium text-gray-900">{stats?.booksCount ?? 0}</dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-8 w-8 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 11V7a4 4 0 118 0v4m-1 10H4a2 2 0 01-2-2v-6a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Reviews Written</dt>
+                      <dd className="text-lg font-medium text-gray-900">{stats?.reviewsCount ?? 0}</dd>
                     </dl>
                   </div>
                 </div>

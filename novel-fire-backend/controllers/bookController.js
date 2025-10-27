@@ -5,7 +5,19 @@ const Book = require('../models/Book');
 // @route   GET /api/books
 // @access  Public
 const getBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find({});
+  const { search, genre } = req.query;
+  const filter = {};
+  if (search && String(search).trim()) {
+    const s = String(search).trim();
+    filter.$or = [
+      { title: { $regex: s, $options: 'i' } },
+      { author: { $regex: s, $options: 'i' } },
+    ];
+  }
+  if (genre && String(genre).trim()) {
+    filter.genres = String(genre).trim();
+  }
+  const books = await Book.find(filter).sort({ createdAt: -1 });
   res.json(books);
 });
 
@@ -25,7 +37,7 @@ const getBookById = asyncHandler(async (req, res) => {
 // @route   POST /api/books
 // @access  Private
 const createBook = asyncHandler(async (req, res) => {
-  const { title, author, description, genres } = req.body;
+  const { title, author, description, genres, tags } = req.body;
   
   // Parse genres if it's a JSON string (from FormData)
   let parsedGenres = genres;
@@ -36,8 +48,17 @@ const createBook = asyncHandler(async (req, res) => {
       parsedGenres = [genres]; // fallback to single genre array
     }
   }
+  // Parse tags if provided
+  let parsedTags = tags;
+  if (typeof tags === 'string') {
+    try {
+      parsedTags = JSON.parse(tags);
+    } catch (error) {
+      parsedTags = [tags];
+    }
+  }
   
-  const book = new Book({ title, author, description, genres: parsedGenres, user: req.user._id });
+  const book = new Book({ title, author, description, genres: parsedGenres, tags: parsedTags, user: req.user._id });
   if (req.file) book.coverImage = req.file.filename;
   const created = await book.save();
   res.status(201).json(created);
@@ -56,7 +77,7 @@ const updateBook = asyncHandler(async (req, res) => {
     res.status(403);
     throw new Error('Not authorized');
   }
-  const { title, author, description, genres } = req.body;
+  const { title, author, description, genres, tags } = req.body;
   if (title) book.title = title;
   if (author) book.author = author;
   if (description) book.description = description;
@@ -71,6 +92,17 @@ const updateBook = asyncHandler(async (req, res) => {
       }
     }
     book.genres = parsedGenres;
+  }
+  if (tags) {
+    let parsedTags = tags;
+    if (typeof tags === 'string') {
+      try {
+        parsedTags = JSON.parse(tags);
+      } catch (error) {
+        parsedTags = [tags];
+      }
+    }
+    book.tags = parsedTags;
   }
   if (req.file) book.coverImage = req.file.filename;
   const updated = await book.save();

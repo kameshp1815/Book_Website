@@ -6,40 +6,44 @@
  */
 
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="bg-gray-50/80 dark:bg-gray-900/70 backdrop-blur border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary-600">Novel Fire</span>
+              <FontAwesomeIcon icon={faBook} className="text-blue-600 text-lg mr-2" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Novashelf</span>
             </Link>
-            <p className="mt-2 text-sm text-gray-600 max-w-md">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 max-w-md">
               Discover, read, and share amazing novels. Your gateway to endless stories and adventures.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase">
               Quick Links
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link to="/books" className="text-sm text-gray-600 hover:text-primary-600">
+                <Link to="/books" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Browse Books
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="text-sm text-gray-600 hover:text-primary-600">
+                <Link to="/dashboard" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Dashboard
                 </Link>
               </li>
               <li>
-                <Link to="/library" className="text-sm text-gray-600 hover:text-primary-600">
+                <Link to="/library" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   My Library
                 </Link>
               </li>
@@ -48,27 +52,27 @@ const Footer = () => {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 tracking-wider uppercase">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 tracking-wider uppercase">
               Support
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-primary-600">
+                <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-primary-600">
+                <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-primary-600">
+                <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 hover:text-primary-600">
+                <a href="#" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary-600">
                   Privacy Policy
                 </a>
               </li>
@@ -77,10 +81,10 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
+        <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">
-              © {new Date().getFullYear()} Novel Fire. All rights reserved.
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {new Date().getFullYear()} Novashelf. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <a href="#" className="text-gray-400 hover:text-primary-600">

@@ -20,6 +20,7 @@ import CreateBook from './pages/CreateBook';
 import MyBooks from './pages/MyBooks';
 import ManageChapters from './pages/ManageChapters';
 import AuthorDashboard from './pages/AuthorDashboard';
+import Reader from './pages/Reader';
 
 function App() {
   return (
@@ -47,17 +48,21 @@ function App() {
               <Route
                 path="/books"
                 element={
-                  <Layout>
-                    <Books />
-                  </Layout>
+                  <ProtectedRoute>
+                    <Layout>
+                      <Books />
+                    </Layout>
+                  </ProtectedRoute>
                 }
               />
               <Route
                 path="/book/:id"
                 element={
-                  <Layout>
-                    <BookDetails />
-                  </Layout>
+                  <ProtectedRoute>
+                    <Layout>
+                      <BookDetails />
+                    </Layout>
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -113,6 +118,16 @@ function App() {
                 }
               />
               <Route
+                path="/read/:bookId"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Reader />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/author-dashboard"
                 element={
                   <ProtectedRoute>
@@ -123,24 +138,26 @@ function App() {
                 }
               />
               
-              {/* Redirect root to books */}
-              <Route path="/" element={<Navigate to="/books" replace />} />
+              {/* Redirect root to login */}
+              <Route path="/" element={<Navigate to="/login" replace />} />
               
               {/* 404 fallback */}
               <Route
                 path="*"
                 element={
-                  <Layout>
-                    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                      <div className="text-center">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-                        <p className="text-gray-600 mb-8">Page not found</p>
-                        <a href="/" className="btn btn-primary">
-                          Go Home
-                        </a>
+                  <ProtectedRoute>
+                    <Layout>
+                      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                        <div className="text-center">
+                          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">404</h1>
+                          <p className="text-gray-600 dark:text-gray-300 mb-8">Page not found</p>
+                          <a href="/" className="btn btn-primary">
+                            Go Home
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                  </Layout>
+                    </Layout>
+                  </ProtectedRoute>
                 }
               />
             </Routes>

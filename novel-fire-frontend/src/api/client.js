@@ -28,11 +28,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+    // Only handle 401 errors for API requests that aren't auth-related
+    if (error.response?.status === 401 && 
+        !error.config.url.includes('/auth/') && 
+        !error.config.url.includes('/users/profile')) {
+      // Don't automatically redirect or remove tokens on page refresh
+      console.error('Authentication error:', error.response?.data?.message || 'Unauthorized');
     }
     return Promise.reject(error);
   }

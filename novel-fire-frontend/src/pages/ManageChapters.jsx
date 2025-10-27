@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
+
 import toast from 'react-hot-toast';
 import { useBook, useBookChapters, useCreateChapter, useUpdateChapter, useDeleteChapter } from '../hooks/useBooks';
 import { CardLoader } from '../components/Loader';
@@ -14,9 +15,9 @@ import { useAuth } from '../context/AuthContext';
 
 const ManageChapters = () => {
   const { user } = useAuth();
-  const { id } = useParams();
-  const { data: book, isLoading: isLoadingBook, error: bookError } = useBook(id);
-  const { data: chapters, isLoading: isLoadingChapters, error: chaptersError, refetch } = useBookChapters(id);
+  const { bookId } = useParams();
+  const { data: book, isLoading: isLoadingBook, error: bookError } = useBook(bookId);
+  const { data: chapters, isLoading: isLoadingChapters, error: chaptersError, refetch } = useBookChapters(bookId);
 
   const { mutate: createChapter } = useCreateChapter();
   const { mutate: updateChapter } = useUpdateChapter();
@@ -55,7 +56,7 @@ const ManageChapters = () => {
   // Redirect if not book owner
   if (!isBookOwner) {
     toast.error("You are not authorized to manage chapters for this book.");
-    return <Navigate to={`/book/${id}`} replace />;
+    return <Navigate to={`/book/${bookId}`} replace />;
   }
 
   const openCreateModal = () => {
@@ -93,20 +94,21 @@ const ManageChapters = () => {
       if (currentChapter) {
         // Update chapter
         await updateChapter({
-          id: currentChapter._id,
+          chapterId: currentChapter._id,
           chapterData: {
             title: chapterTitle,
             content: chapterContent,
-            book: id,
           },
         });
         toast.success('Chapter updated successfully!');
       } else {
         // Create chapter
         await createChapter({
-          title: chapterTitle,
-          content: chapterContent,
-          book: id,
+          bookId,
+          chapterData: {
+            title: chapterTitle,
+            content: chapterContent,
+          },
         });
         toast.success('Chapter created successfully!');
       }
