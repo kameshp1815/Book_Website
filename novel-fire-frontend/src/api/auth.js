@@ -1,9 +1,21 @@
 import apiClient from './client';
 
 export const authAPI = {
-  // Register new user
+  // Register new user (Step 1: Send OTP)
   register: async (userData) => {
     const response = await apiClient.post('/auth/register', userData);
+    return response.data;
+  },
+
+  // Verify OTP and complete registration
+  verifyOTP: async (userId, otp) => {
+    const response = await apiClient.post('/auth/verify-otp', { userId, otp });
+    return response.data;
+  },
+
+  // Resend OTP
+  resendOTP: async (userId) => {
+    const response = await apiClient.post('/auth/resend-otp', { userId });
     return response.data;
   },
 

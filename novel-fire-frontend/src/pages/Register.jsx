@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
+import OTPVerification from '../components/OTPVerification';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +14,10 @@ const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const [verificationData, setVerificationData] = useState(null);
   
-  const { register, loading, error } = useAuth();
+  const { register, loading, error, pendingVerification } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -64,16 +67,37 @@ const Register = () => {
     if (!validateForm()) return;
     
     try {
-      await register({
+      const data = await register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
-      navigate('/dashboard');
+      
+      // Show OTP verification screen
+      setVerificationData({
+        userId: data.userId,
+        email: data.email,
+      });
+      setShowOTPVerification(true);
     } catch (err) {
       // Error is handled by the auth context
     }
   };
+
+  const handleVerificationComplete = () => {
+    navigate('/dashboard');
+  };
+
+  // Show OTP verification screen if needed
+  if (showOTPVerification && verificationData) {
+    return (
+      <OTPVerification
+        userId={verificationData.userId}
+        email={verificationData.email}
+        onVerificationComplete={handleVerificationComplete}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-blue-50/40 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 py-12 px-4 sm:px-6 lg:px-8">
