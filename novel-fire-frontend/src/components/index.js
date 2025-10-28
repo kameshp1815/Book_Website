@@ -13,6 +13,9 @@ export { default as Layout } from './Layout';
 export { default as Navbar } from './Navbar';
 export { default as Footer } from './Footer';
 
+// Auth Components
+export { default as OTPVerification } from './OTPVerification';
+
 // Utility Components
 export { default as ProtectedRoute } from './ProtectedRoute';
 export { 

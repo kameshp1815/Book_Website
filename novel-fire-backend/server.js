@@ -22,11 +22,18 @@ app.use(cors({
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use(limiter);
 
+// Debug: log all incoming requests (helps verify correct server is handling traffic)
+app.use((req, res, next) => {
+  console.log('[HTTP]', req.method, req.originalUrl);
+  next();
+});
+
 // Serve uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => res.send('API is running...'));
 
+console.log('[Boot] Mounting /api/auth routes');
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/books', require('./routes/bookRoutes'));

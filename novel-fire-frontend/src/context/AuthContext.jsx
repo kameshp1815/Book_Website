@@ -45,6 +45,16 @@ const authReducer = (state, action) => {
         token: null,
         error: action.payload,
       };
+    case 'REGISTER_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        isAuthenticated: false,
+        user: null,
+        token: null,
+        error: null,
+        pendingVerification: action.payload,
+      };
     case 'LOGOUT':
       return {
         ...state,
@@ -75,6 +85,7 @@ const initialState = {
   token: null,
   loading: false,
   error: null,
+  pendingVerification: null,
 };
 
 // Auth provider component
@@ -134,14 +145,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register function
+  // Register function (Step 1: Send OTP)
   const register = async (userData) => {
     try {
       dispatch({ type: 'LOGIN_START' });
       
       const data = await authAPI.register(userData);
       
-      // Store in localStorage
+      // Don't store token yet - user needs to verify OTP first
+      dispatch({
+        type: 'REGISTER_SUCCESS',
+        payload: {
+          userId: data.userId,
+          email: data.email,
+          requiresVerification: data.requiresVerification,
+        },
+      });
+      
+      return data;
+    } catch (error) {
+      dispatch({
+        type: 'LOGIN_FAILURE',
+        payload: error.response?.data?.message || 'Registration failed',
+      });
+      throw error;
+    }
+  };
+
+  // Verify OTP function
+  const verifyOTP = async (userId, otp) => {
+    try {
+      dispatch({ type: 'LOGIN_START' });
+      
+      const data = await authAPI.verifyOTP(userId, otp);
+      
+      // Store in localStorage after successful verification
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify({
         _id: data._id,
@@ -165,8 +203,18 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       dispatch({
         type: 'LOGIN_FAILURE',
-        payload: error.response?.data?.message || 'Registration failed',
+        payload: error.response?.data?.message || 'OTP verification failed',
       });
+      throw error;
+    }
+  };
+
+  // Resend OTP function
+  const resendOTP = async (userId) => {
+    try {
+      const data = await authAPI.resendOTP(userId);
+      return data;
+    } catch (error) {
       throw error;
     }
   };
@@ -189,6 +237,8 @@ export const AuthProvider = ({ children }) => {
     ...state,
     login,
     register,
+    verifyOTP,
+    resendOTP,
     logout,
     updateUser,
   };
