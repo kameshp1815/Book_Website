@@ -72,8 +72,6 @@ const Register = () => {
         email: formData.email,
         password: formData.password,
       });
-      
-      // Show OTP verification screen
       setVerificationData({
         userId: data.userId,
         email: data.email,
@@ -85,7 +83,7 @@ const Register = () => {
   };
 
   const handleVerificationComplete = () => {
-    navigate('/dashboard');
+     navigate('/favorite');
   };
 
   // Show OTP verification screen if needed

@@ -21,6 +21,7 @@ import MyBooks from './pages/MyBooks';
 import ManageChapters from './pages/ManageChapters';
 import AuthorDashboard from './pages/AuthorDashboard';
 import Reader from './pages/Reader';
+import Favorite from './pages/Favorite';
 
 function App() {
   return (
@@ -32,6 +33,12 @@ function App() {
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/favorite" element={
+                <ProtectedRoute>
+                  <Favorite/>
+                </ProtectedRoute>
+                } />
+
               <Route path="/debug" element={<Debug />} />
               
               {/* Protected routes with layout */}
