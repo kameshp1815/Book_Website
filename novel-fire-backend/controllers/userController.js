@@ -1,8 +1,8 @@
-const asyncHandler = require('express-async-handler');
-const User = require('../models/User');
-const Book = require('../models/Book');
-const Review = require('../models/Review');
-const Library = require('../models/Library');
+import asyncHandler from 'express-async-handler';
+import User from '../models/User.js';
+import Book from '../models/Book.js';
+import Review from '../models/Review.js';
+import Library from '../models/Library.js';
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -137,20 +137,36 @@ const unfollowUser = asyncHandler(async (req, res) => {
 // @access  Private
 const getDashboard = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const [booksCount, reviewsCount, library, me] = await Promise.all([
-    Book.countDocuments({ user: userId }),
-    Review.countDocuments({ user: userId }),
-    Library.findOne({ user: userId }).select('books'),
-    User.findById(userId).select('followers following'),
-  ]);
+  const me = await User.findById(userId).select('role followers following');
 
-  res.json({
-    booksCount,
-    reviewsCount,
-    libraryCount: library?.books?.length || 0,
-    followersCount: me?.followers?.length || 0,
-    followingCount: me?.following?.length || 0,
-  });
+  if (!me) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  if (me.role === 'author') {
+    const books = await Book.find({ user: userId }).select('_id');
+    const bookIds = books.map(b => b._id);
+    const [booksCount, reviewsReceivedCount] = await Promise.all([
+      Promise.resolve(bookIds.length),
+      Review.countDocuments({ book: { $in: bookIds } }),
+    ]);
+    return res.json({
+      role: me.role,
+      booksCount,
+      reviewsCount: reviewsReceivedCount,
+      followersCount: me.followers?.length || 0,
+      followingCount: me.following?.length || 0,
+    });
+  } else {
+    const library = await Library.findOne({ user: userId }).select('books');
+    return res.json({
+      role: me.role,
+      libraryCount: library?.books?.length || 0,
+      followersCount: me.followers?.length || 0,
+      followingCount: me.following?.length || 0,
+    });
+  }
 });
 
-module.exports = { getProfile, updateProfile, getFollowers, getFollowing, followUser, unfollowUser, getDashboard };
+export { getProfile, updateProfile, getFollowers, getFollowing, followUser, unfollowUser, getDashboard };

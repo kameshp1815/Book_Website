@@ -1,13 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getReviewsByBook, createReview, updateReview, deleteReview } = require('../controllers/reviewController');
-const { protect } = require('../middleware/authMiddleware');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validateMiddleware');
+import { getReviewsByBook, createReview, updateReview, deleteReview } from '../controllers/reviewController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validateMiddleware.js';
 
 router.get('/book/:bookId', getReviewsByBook);
 router.post('/', protect, body('rating').isInt({ min: 1, max: 5 }), body('book').notEmpty(), validate, createReview);
 router.put('/:id', protect, body('rating').optional().isInt({ min: 1, max: 5 }), validate, updateReview);
 router.delete('/:id', protect, deleteReview);
 
-module.exports = router;
+export default router;

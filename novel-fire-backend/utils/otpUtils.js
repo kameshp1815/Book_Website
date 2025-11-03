@@ -1,12 +1,12 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // Generate a 6-digit OTP
-const generateOTP = () => {
+export const generateOTP = () => {
   return crypto.randomInt(100000, 999999).toString();
 };
 
 // Generate OTP with expiration time (default 10 minutes)
-const generateOTPWithExpiry = (expiryMinutes = 10) => {
+export const generateOTPWithExpiry = (expiryMinutes = 10) => {
   const otp = generateOTP();
   const expiresAt = new Date(Date.now() + expiryMinutes * 60 * 1000);
   
@@ -17,12 +17,12 @@ const generateOTPWithExpiry = (expiryMinutes = 10) => {
 };
 
 // Check if OTP is expired
-const isOTPExpired = (expiresAt) => {
+export const isOTPExpired = (expiresAt) => {
   return new Date() > new Date(expiresAt);
 };
 
 // Validate OTP
-const validateOTP = (providedOTP, storedOTP, expiresAt) => {
+export const validateOTP = (providedOTP, storedOTP, expiresAt) => {
   if (!providedOTP || !storedOTP || !expiresAt) {
     return false;
   }
@@ -32,11 +32,4 @@ const validateOTP = (providedOTP, storedOTP, expiresAt) => {
   }
   
   return providedOTP === storedOTP;
-};
-
-module.exports = {
-  generateOTP,
-  generateOTPWithExpiry,
-  isOTPExpired,
-  validateOTP,
 };

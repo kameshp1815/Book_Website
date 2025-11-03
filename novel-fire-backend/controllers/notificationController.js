@@ -1,10 +1,10 @@
-const asyncHandler = require('express-async-handler');
-const Notification = require('../models/Notification');
-const User = require('../models/User');
+import asyncHandler from 'express-async-handler';
+import Notification from '../models/Notification.js';
+import User from '../models/User.js';
 
 // GET /api/notifications
 // Query: unread=true|false, limit, before (ISO)
-exports.listNotifications = asyncHandler(async (req, res) => {
+export const listNotifications = asyncHandler(async (req, res) => {
   const { unread, limit = 20, before } = req.query;
   const filter = { user: req.user._id };
   if (unread === 'true') filter.read = false;
@@ -16,7 +16,7 @@ exports.listNotifications = asyncHandler(async (req, res) => {
 });
 
 // POST /api/notifications/mark-read { ids: [] }
-exports.markRead = asyncHandler(async (req, res) => {
+export const markRead = asyncHandler(async (req, res) => {
   const { ids } = req.body;
   if (!Array.isArray(ids) || ids.length === 0) {
     return res.status(400).json({ message: 'ids must be a non-empty array' });
@@ -29,7 +29,7 @@ exports.markRead = asyncHandler(async (req, res) => {
 });
 
 // POST /api/notifications/mark-all-read
-exports.markAllRead = asyncHandler(async (req, res) => {
+export const markAllRead = asyncHandler(async (req, res) => {
   await Notification.updateMany(
     { user: req.user._id, read: false },
     { $set: { read: true, readAt: new Date() } }
@@ -38,13 +38,13 @@ exports.markAllRead = asyncHandler(async (req, res) => {
 });
 
 // GET /api/notifications/prefs
-exports.getPrefs = asyncHandler(async (req, res) => {
+export const getPrefs = asyncHandler(async (req, res) => {
   const me = await User.findById(req.user._id).select('notificationPrefs');
   res.json(me.notificationPrefs || {});
 });
 
 // PUT /api/notifications/prefs
-exports.updatePrefs = asyncHandler(async (req, res) => {
+export const updatePrefs = asyncHandler(async (req, res) => {
   const { category, inApp } = req.body;
   if (!category || typeof inApp !== 'boolean') {
     return res.status(400).json({ message: 'category and inApp(boolean) are required' });
@@ -57,7 +57,7 @@ exports.updatePrefs = asyncHandler(async (req, res) => {
 });
 
 // Helper to create a notification respecting prefs
-exports.createNotification = async ({ userId, type, title, body, data = {} }) => {
+export const createNotification = async ({ userId, type, title, body, data = {} }) => {
   try {
     const user = await User.findById(userId).select('notificationPrefs');
     const keyMap = {

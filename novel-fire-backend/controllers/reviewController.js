@@ -1,5 +1,5 @@
-const asyncHandler = require('express-async-handler');
-const Review = require('../models/Review');
+import asyncHandler from 'express-async-handler';
+import Review from '../models/Review.js';
 
 // @desc    Get reviews for a book
 // @route   GET /api/reviews/book/:bookId
@@ -56,4 +56,4 @@ const deleteReview = asyncHandler(async (req, res) => {
   res.json({ message: 'Review removed' });
 });
 
-module.exports = { getReviewsByBook, createReview, updateReview, deleteReview };
+export { getReviewsByBook, createReview, updateReview, deleteReview };

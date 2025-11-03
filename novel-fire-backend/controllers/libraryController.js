@@ -1,6 +1,6 @@
-const asyncHandler = require('express-async-handler');
-const LibraryEntry = require('../models/LibraryEntry');
-const Book = require('../models/Book');
+import asyncHandler from 'express-async-handler';
+import LibraryEntry from '../models/LibraryEntry.js';
+import Book from '../models/Book.js';
 
 // Add book to user's library
 const addToLibrary = asyncHandler(async (req, res) => {
@@ -38,4 +38,4 @@ const getLibrary = asyncHandler(async (req, res) => {
   res.json(entries);
 });
 
-module.exports = { addToLibrary, removeFromLibrary, updateProgress, getLibrary };
+export { addToLibrary, removeFromLibrary, updateProgress, getLibrary };

@@ -1,18 +1,18 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validateMiddleware');
-const {
+import { protect } from '../middleware/authMiddleware.js';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validateMiddleware.js';
+import {
   addToLibrary,
   removeFromLibrary,
   updateProgress,
   getLibrary,
-} = require('../controllers/libraryController');
+} from '../controllers/libraryController.js';
 
 router.post('/', protect, body('book').notEmpty(), validate, addToLibrary);
 router.delete('/:bookId', protect, removeFromLibrary);
 router.put('/progress', protect, body('book').notEmpty(), validate, updateProgress);
 router.get('/', protect, getLibrary);
 
-module.exports = router;
+export default router;

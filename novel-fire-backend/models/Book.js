@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const bookSchema = mongoose.Schema(
   {
@@ -26,4 +26,4 @@ bookSchema.virtual('chapters', {
   options: { sort: { order: 1 } } // Sort by chapter order
 });
 
-module.exports = mongoose.model('Book', bookSchema);
+export default mongoose.model('Book', bookSchema);

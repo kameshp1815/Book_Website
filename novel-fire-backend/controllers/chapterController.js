@@ -1,6 +1,6 @@
-const asyncHandler = require('express-async-handler');
-const Chapter = require('../models/Chapter');
-const Book = require('../models/Book');
+import asyncHandler from 'express-async-handler';
+import Chapter from '../models/Chapter.js';
+import Book from '../models/Book.js';
 
 // @desc    Get chapters for a book
 // @route   GET /api/chapters/book/:bookId
@@ -72,4 +72,4 @@ const deleteChapter = asyncHandler(async (req, res) => {
   res.json({ message: 'Chapter removed' });
 });
 
-module.exports = { getChaptersByBook, createChapter, updateChapter, deleteChapter };
+export { getChaptersByBook, createChapter, updateChapter, deleteChapter };

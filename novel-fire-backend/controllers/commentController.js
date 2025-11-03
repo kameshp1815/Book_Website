@@ -1,11 +1,11 @@
-const asyncHandler = require('express-async-handler');
-const Comment = require('../models/Comment');
-const Book = require('../models/Book');
-const Chapter = require('../models/Chapter');
-const { createNotification } = require('./notificationController');
+import asyncHandler from 'express-async-handler';
+import Comment from '../models/Comment.js';
+import Book from '../models/Book.js';
+import Chapter from '../models/Chapter.js';
+import { createNotification } from './notificationController.js';
 
 // GET /api/comments?targetType=book|chapter&targetId=:id
-exports.list = asyncHandler(async (req, res) => {
+export const list = asyncHandler(async (req, res) => {
   const { targetType, targetId } = req.query;
   if (!['book', 'chapter'].includes(targetType) || !targetId) {
     return res.status(400).json({ message: 'targetType and targetId are required' });
@@ -15,7 +15,7 @@ exports.list = asyncHandler(async (req, res) => {
 });
 
 // POST /api/comments { targetType, targetId, content, parentId? }
-exports.create = asyncHandler(async (req, res) => {
+export const create = asyncHandler(async (req, res) => {
   const { targetType, targetId, content, parentId } = req.body;
   if (!['book', 'chapter'].includes(targetType) || !targetId || !content) {
     return res.status(400).json({ message: 'targetType, targetId and content are required' });
@@ -70,7 +70,7 @@ exports.create = asyncHandler(async (req, res) => {
 });
 
 // DELETE /api/comments/:id (owner or admin)
-exports.remove = asyncHandler(async (req, res) => {
+export const remove = asyncHandler(async (req, res) => {
   const c = await Comment.findById(req.params.id);
   if (!c) return res.status(404).json({ message: 'Comment not found' });
   if (String(c.user) !== String(req.user._id) && !req.user.isAdmin) {

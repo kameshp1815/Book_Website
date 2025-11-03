@@ -1,15 +1,16 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getBooks, getBookById, createBook, updateBook, deleteBook } = require('../controllers/bookController');
-const { protect } = require('../middleware/authMiddleware');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validateMiddleware');
-const upload = require('../utils/upload');
+import { getBooks, getBookById, createBook, updateBook, deleteBook } from '../controllers/bookController.js';
+import { protect, ensureRole } from '../middleware/authMiddleware.js';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validateMiddleware.js';
+import upload from '../utils/upload.js';
 
 router.route('/')
 	.get(getBooks)
 	.post(
 		protect,
+		ensureRole('author'),
 		upload.single('cover'),
 		body('title').notEmpty().withMessage('Title is required'),
 		body('tags').optional().custom((value) => {
@@ -34,6 +35,7 @@ router.route('/:id')
 	.get(getBookById)
 	.put(
 		protect,
+		ensureRole('author'),
 		upload.single('cover'),
 		body('title').optional().notEmpty().withMessage('Title cannot be empty'),
 		body('tags').optional().custom((value) => {
@@ -52,6 +54,6 @@ router.route('/:id')
 		validate,
 		updateBook
 	)
-	.delete(protect, deleteBook);
+	.delete(protect, ensureRole('author'), deleteBook);
 
-module.exports = router;
+export default router;

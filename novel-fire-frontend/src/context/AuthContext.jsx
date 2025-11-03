@@ -121,6 +121,7 @@ export const AuthProvider = ({ children }) => {
         _id: data._id,
         name: data.name,
         email: data.email,
+        role: data.role,
       }));
       
       dispatch({
@@ -131,6 +132,7 @@ export const AuthProvider = ({ children }) => {
             _id: data._id,
             name: data.name,
             email: data.email,
+            role: data.role,
           },
         },
       });
@@ -185,6 +187,7 @@ export const AuthProvider = ({ children }) => {
         _id: data._id,
         name: data.name,
         email: data.email,
+        role: data.role,
       }));
       
       dispatch({
@@ -195,6 +198,7 @@ export const AuthProvider = ({ children }) => {
             _id: data._id,
             name: data.name,
             email: data.email,
+            role: data.role,
           },
         },
       });

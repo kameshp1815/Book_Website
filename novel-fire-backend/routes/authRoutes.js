@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { register, verifyOTP, resendOTP, login } = require('../controllers/authController');
-const { body } = require('express-validator');
-const { validate } = require('../middleware/validateMiddleware');
+import { register, verifyOTP, resendOTP, login } from '../controllers/authController.js';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validateMiddleware.js';
 
 // Debug: log incoming /api/auth requests
 router.use((req, res, next) => {
@@ -10,9 +10,17 @@ router.use((req, res, next) => {
   next();
 });
 
-router.post('/register', body('name').notEmpty(), body('email').isEmail(), body('password').isLength({ min: 6 }), validate, register);
+router.post(
+  '/register',
+  body('name').notEmpty(),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+  body('role').optional().isIn(['reader','author']),
+  validate,
+  register
+);
 router.post('/verify-otp', body('userId').notEmpty(), body('otp').isLength({ min: 6, max: 6 }), validate, verifyOTP);
 router.post('/resend-otp', body('userId').notEmpty(), validate, resendOTP);
 router.post('/login', body('email').isEmail(), body('password').notEmpty(), validate, login);
 
-module.exports = router;
+export default router;

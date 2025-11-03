@@ -58,7 +58,7 @@ const Navbar = () => {
               Browse Books
             </Link>
 
-            {isAuthenticated && (
+            {isAuthenticated && user?.role === 'reader' && (
               <>
                 <Link
                   to="/dashboard"
@@ -80,6 +80,20 @@ const Navbar = () => {
                 >
                   My Library
                 </Link>
+              </>
+            )}
+            {isAuthenticated && user?.role === 'author' && (
+              <>
+                <Link
+                  to="/author-dashboard"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/author-dashboard')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  Author Dashboard
+                </Link>
                 <Link
                   to="/my-books"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -89,16 +103,6 @@ const Navbar = () => {
                   }`}
                 >
                   My Books
-                </Link>
-                <Link
-                  to="/author-dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive('/author-dashboard')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  Author
                 </Link>
               </>
             )}
@@ -187,14 +191,14 @@ const Navbar = () => {
                 onClick={closeMobileMenu}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
                   isActive('/books')
-                    ? 'text-primary-600 bg-primary-50'
+                    ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 Browse Books
               </Link>
-              
-              {isAuthenticated && (
+
+              {isAuthenticated && user?.role === 'reader' && (
                 <>
                   <Link
                     to="/dashboard"
@@ -219,15 +223,39 @@ const Navbar = () => {
                     My Library
                   </Link>
                   <Link
-                    to="/library"
+                    to="/profile"
+                    onClick={closeMobileMenu}
+                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
+                      isActive('/profile')
+                        ? 'text-white bg-gradient-to-r from-blue-500 to-indigo-600'
+                        : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                    }`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                    My Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+              {isAuthenticated && user?.role === 'author' && (
+                <>
+                  <Link
+                    to="/author-dashboard"
                     onClick={closeMobileMenu}
                     className={`block px-3 py-2 rounded-md text-base font-medium ${
-                      isActive('/library')
-                        ? 'text-blue-600 bg-blue-50'
+                      isActive('/author-dashboard')
+                        ? 'text-primary-600 bg-primary-50'
                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                     }`}
                   >
-                    My Library
+                    Author Dashboard
                   </Link>
                   <Link
                     to="/my-books"
@@ -262,7 +290,6 @@ const Navbar = () => {
                   </button>
                 </>
               )}
-              
               {!isAuthenticated && (
                 <>
                   <Link

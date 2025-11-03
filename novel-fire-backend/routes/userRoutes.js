@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { 
+import { 
   getProfile, 
   updateProfile,
   getFollowers,
@@ -8,8 +8,8 @@ const {
   followUser,
   unfollowUser,
   getDashboard,
-} = require('../controllers/userController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/userController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
@@ -23,4 +23,4 @@ router.delete('/:id/follow', protect, unfollowUser);
 // Dashboard stats for current user
 router.get('/dashboard', protect, getDashboard);
 
-module.exports = router;
+export default router;

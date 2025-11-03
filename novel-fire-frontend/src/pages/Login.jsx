@@ -16,7 +16,7 @@ const Login = () => {
   const location = useLocation();
   
   // Redirect to intended page after login
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname;
 
   const handleChange = (e) => {
     setFormData({
@@ -28,8 +28,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData);
-      navigate(from, { replace: true });
+      const data = await login(formData);
+      const defaultRoute = data?.role === 'author' ? '/author-dashboard' : '/dashboard';
+      navigate(from || defaultRoute, { replace: true });
     } catch (err) {
       // Error is handled by the auth context
     }

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const librarySchema = mongoose.Schema(
   {
@@ -8,4 +8,4 @@ const librarySchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Library', librarySchema);
+export default mongoose.model('Library', librarySchema);

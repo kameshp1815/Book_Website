@@ -6,6 +6,7 @@ import { queryClient } from './utils/queryClient';
 // Components
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleRoute from './components/RoleRoute';
 
 // Pages
 import Login from './pages/Login';
@@ -46,9 +47,11 @@ function App() {
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <Dashboard />
-                    </Layout>
+                    <RoleRoute allow={["reader"]}>
+                      <Layout>
+                        <Dashboard />
+                      </Layout>
+                    </RoleRoute>
                   </ProtectedRoute>
                 }
               />
@@ -98,9 +101,11 @@ function App() {
                 path="/my-books"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <MyBooks />
-                    </Layout>
+                    <RoleRoute allow={["author"]}>
+                      <Layout>
+                        <MyBooks />
+                      </Layout>
+                    </RoleRoute>
                   </ProtectedRoute>
                 }
               />
@@ -108,9 +113,11 @@ function App() {
                 path="/create-book"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <CreateBook />
-                    </Layout>
+                    <RoleRoute allow={["author"]}>
+                      <Layout>
+                        <CreateBook />
+                      </Layout>
+                    </RoleRoute>
                   </ProtectedRoute>
                 }
               />
@@ -118,9 +125,11 @@ function App() {
                 path="/book/:bookId/chapters"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <ManageChapters />
-                    </Layout>
+                    <RoleRoute allow={["author"]}>
+                      <Layout>
+                        <ManageChapters />
+                      </Layout>
+                    </RoleRoute>
                   </ProtectedRoute>
                 }
               />
@@ -138,9 +147,11 @@ function App() {
                 path="/author-dashboard"
                 element={
                   <ProtectedRoute>
-                    <Layout>
-                      <AuthorDashboard />
-                    </Layout>
+                    <RoleRoute allow={["author"]}>
+                      <Layout>
+                        <AuthorDashboard />
+                      </Layout>
+                    </RoleRoute>
                   </ProtectedRoute>
                 }
               />

@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // Create transporter (you'll need to configure this with your email service)
 const createTransporter = async () => {
@@ -75,7 +75,7 @@ const createTransporter = async () => {
 };
 
 // Send OTP email
-const sendOTPEmail = async (email, otp, name) => {
+export const sendOTPEmail = async (email, otp, name) => {
   try {
     const transporter = await createTransporter();
     
@@ -127,7 +127,7 @@ const sendOTPEmail = async (email, otp, name) => {
 };
 
 // Send welcome email after successful verification
-const sendWelcomeEmail = async (email, name) => {
+export const sendWelcomeEmail = async (email, name) => {
   try {
     const transporter = await createTransporter();
     
@@ -185,9 +185,4 @@ const sendWelcomeEmail = async (email, name) => {
     // Don't throw error for welcome email as it's not critical
     return false;
   }
-};
-
-module.exports = {
-  sendOTPEmail,
-  sendWelcomeEmail,
 };

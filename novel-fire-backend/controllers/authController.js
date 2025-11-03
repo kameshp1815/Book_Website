@@ -1,14 +1,14 @@
-const asyncHandler = require('express-async-handler');
-const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
-const { generateOTPWithExpiry, validateOTP } = require('../utils/otpUtils');
-const { sendOTPEmail, sendWelcomeEmail } = require('../utils/emailService');
+import asyncHandler from 'express-async-handler';
+import User from '../models/User.js';
+import generateToken from '../utils/generateToken.js';
+import { generateOTPWithExpiry, validateOTP } from '../utils/otpUtils.js';
+import { sendOTPEmail, sendWelcomeEmail } from '../utils/emailService.js';
 
 // @desc    Register new user (Step 1: Send OTP)
 // @route   POST /api/auth/register
 // @access  Public
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   
   // Check if user already exists
   const userExists = await User.findOne({ email });
@@ -21,10 +21,12 @@ const register = asyncHandler(async (req, res) => {
   const { otp, expiresAt } = generateOTPWithExpiry(10); // 10 minutes expiry
 
   // Create user with OTP (not verified yet)
+  const normalizedRole = role && ['reader','author'].includes(String(role)) ? String(role) : undefined;
   const user = await User.create({ 
     name, 
     email, 
     password,
+    role: normalizedRole, // falls back to schema default if undefined
     otp,
     otpExpires: expiresAt,
     isEmailVerified: false
@@ -40,6 +42,7 @@ const register = asyncHandler(async (req, res) => {
         message: 'Registration successful! Please check your email for verification code.',
         userId: user._id,
         email: user.email,
+        role: user.role,
         requiresVerification: true
       });
     } catch (emailError) {
@@ -93,6 +96,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
     _id: user._id,
     name: user.name,
     email: user.email,
+    role: user.role,
     token: generateToken(user._id),
     message: 'Email verified successfully!'
   });
@@ -158,6 +162,7 @@ const login = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id),
     });
   } else {
@@ -166,4 +171,4 @@ const login = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { register, verifyOTP, resendOTP, login };
+export { register, verifyOTP, resendOTP, login };

@@ -11,6 +11,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'reader',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -71,6 +72,7 @@ const Register = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: formData.role,
       });
       setVerificationData({
         userId: data.userId,
@@ -83,7 +85,13 @@ const Register = () => {
   };
 
   const handleVerificationComplete = () => {
-     navigate('/favorite');
+     try {
+       const user = JSON.parse(localStorage.getItem('user') || '{}');
+       const defaultRoute = user?.role === 'author' ? '/author-dashboard' : '/dashboard';
+       navigate(defaultRoute);
+     } catch {
+       navigate('/dashboard');
+     }
   };
 
   // Show OTP verification screen if needed
@@ -144,6 +152,22 @@ const Register = () => {
 
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
+              <div>
+                <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Role
+                </label>
+                <select
+                  id="role"
+                  name="role"
+                  className="mt-1 block w-full rounded-md border bg-white dark:bg-gray-900 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm border-gray-300 dark:border-gray-700"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="reader">Reader</option>
+                  <option value="author">Author</option>
+                </select>
+              </div>
+
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Full Name
