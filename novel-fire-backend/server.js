@@ -28,9 +28,21 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Security & performance
+const allowlist = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL, // set to your production frontend URL (Vercel)
+].filter(Boolean);
+
+const vercelPattern = /https?:\/\/([a-z0-9-]+-)?.*\.vercel\.app(\/)?$/i;
+
 app.use(cors({
-  origin: 'http://localhost:5173', // React dev port
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow non-browser tools
+    const allowed = allowlist.includes(origin) || vercelPattern.test(origin);
+    if (allowed) return callback(null, true);
+    return callback(new Error('Not allowed by CORS')); 
+  },
+  credentials: true,
 }));
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use(limiter);
