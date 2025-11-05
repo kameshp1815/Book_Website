@@ -14,6 +14,7 @@ import bookRoutes from './routes/bookRoutes.js';
 import chapterRoutes from './routes/chapterRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import libraryRoutes from './routes/libraryRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 // __dirname replacement in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -52,6 +53,7 @@ app.use('/api/books', bookRoutes);
 app.use('/api/chapters', chapterRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/library', libraryRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.use(errorHandler);
 
